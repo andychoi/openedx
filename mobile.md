@@ -654,3 +654,363 @@ Would you like:
 	•	Or a checklist to prepare if you’re onboarding with Edly?
 
 Just say the word!
+
+___
+
+Certainly! You can access the starter fork of the Open edX Android app preconfigured for Tutor at the following public GitHub repository:
+
+👉 https://github.com/overhangio/tutor-android
+
+This repository is maintained by the Tutor team and is designed to integrate seamlessly with Tutor-based Open edX deployments. It provides a Docker-based approach to build and distribute your own Android mobile application for your Open edX platform. ￼
+
+🛠 Features
+	•	Preconfigured for Tutor LMS: Easily integrates with your existing Tutor-based Open edX instance.
+	•	Custom Branding: Allows customization of app name, icons, and colors to match your organization’s branding.
+	•	OAuth2 Authentication: Supports OAuth2 login configured through your LMS.
+	•	Offline Access: Enables downloading course content for offline viewing.
+	•	Push Notifications: Integrates with Firebase for sending push notifications to users.
+
+🚀 Getting Started
+	1.	Clone the Repository:
+
+git clone https://github.com/overhangio/tutor-android.git
+cd tutor-android
+
+
+	2.	Install the Plugin:
+
+tutor plugins install android
+tutor plugins enable android
+
+
+	3.	Configure Your LMS:
+Ensure your LMS is configured with the appropriate OAuth client and that mobile APIs are enabled.
+	4.	Build and Launch:
+
+tutor local launch
+
+After launching, the .apk file will be available for download at http://mobile.local.openedx.io/app.apk.
+
+📄 Documentation
+
+For detailed instructions on customization, building, and deployment, refer to the Tutor Android Plugin Documentation. ￼
+
+If you need assistance with specific customizations or integrations, feel free to ask!
+
+____
+
+Perfect! Let’s build your DIY Open edX mobile app using the official Android app (edx-app-android). This guide walks you through the full process — from cloning the repo to running a branded version connected to your Tutor-based Open edX backend.
+
+⸻
+
+🧱 Part 1: Overview of edX Mobile Architecture
+
+The mobile app connects to Open edX via:
+	•	REST APIs (/api/mobile/v1/, /api/course/, etc.)
+	•	OAuth2 authentication (/oauth2/access_token)
+	•	Video content streaming or download
+	•	Supports theming, offline mode, and branding
+
+⚠️ Requires Open edX configured with OAuth2, typically already set up via Tutor.
+
+⸻
+
+🚀 Part 2: Clone & Build the Official Android App
+
+✅ Step 1: Clone the App
+
+git clone https://github.com/openedx/edx-app-android.git
+cd edx-app-android
+
+📝 Tip: Use a stable release branch (e.g. release/Quince.3)
+
+git checkout release/Quince.3
+
+
+
+⸻
+
+✅ Step 2: Install Android Build Tools
+
+Install the following:
+	•	Android Studio
+	•	Android SDK (API level ≥ 33)
+	•	Android NDK (optional, for native features)
+	•	Gradle (installed automatically via Android Studio)
+
+⸻
+
+✅ Step 3: Configure config Files
+
+Edit the LMS server details and OAuth2 credentials.
+
+🔧 File: config/config.json
+
+{
+  "ENVIRONMENT_DISPLAY_NAME": "My Open edX",
+  "HOST_URL": "https://yourdomain.com",
+  "API_HOST_URL": "https://yourdomain.com",
+  "OAUTH_CLIENT_ID": "mobile-app",
+  "FEEDBACK_EMAIL_ADDRESS": "support@yourdomain.com",
+  "VERSION_NAME": "1.0.0",
+  "PLATFORM_NAME": "YourPlatform",
+  "GOOGLE_PLAY_BUNDLE_ID": "org.openedx.app",
+  "FACEBOOK_APP_ID": "",
+  "FABRIC_API_KEY": ""
+}
+
+Ensure:
+	•	OAUTH_CLIENT_ID matches your LMS settings (/admin/oauth2/client/)
+	•	The redirect URI is set: https://yourdomain.com/oauth2/mobile
+
+⸻
+
+✅ Step 4: Build the APK
+
+From Android Studio:
+	•	Open the edx-app-android project
+	•	Let it sync Gradle and dependencies
+	•	Click Build > Build Bundle(s) / APK(s) > Build APK(s)
+
+Or via command line:
+
+./gradlew assembleDebug
+
+Result:
+APK file at: app/build/outputs/apk/debug/app-debug.apk
+
+⸻
+
+🔑 Part 3: Set Up OAuth in Tutor (if not done)
+	1.	Start Django admin:
+
+tutor local run lms createsuperuser
+tutor local run lms ./manage.py lms shell
+
+	2.	Create OAuth client:
+
+from oauth2_provider.models import Application
+Application.objects.create(
+    name="mobile-app",
+    client_id="mobile-app",
+    client_secret="REPLACE_THIS",
+    client_type="confidential",
+    authorization_grant_type="password",
+    redirect_uris="https://yourdomain.com/oauth2/mobile"
+)
+
+Or via /admin/oauth2_provider/application/.
+
+⸻
+
+🎨 Part 4: Customize Branding
+
+Update:
+	•	config/config.json: app name, platform label
+	•	app/src/main/res/: logos, icons, colors
+	•	AndroidManifest.xml: package name
+
+Then rebuild the APK and test.
+
+⸻
+
+🧪 Part 5: Test on Emulator or Device
+	1.	Install APK on device:
+
+adb install app-debug.apk
+
+	2.	Launch and log in using LMS credentials.
+	3.	Verify:
+
+	•	Course list loads
+	•	Videos stream or download
+	•	Login works with OAuth2
+	•	Offline support (optional)
+
+⸻
+
+🧠 Optional Enhancements
+
+Feature	Guide
+AI Tutor Integration	Add chatbot view, connect to your FastAPI backend
+Push Notifications	Use Firebase Cloud Messaging (FCM)
+Deep Linking	Add intent filters in AndroidManifest.xml
+Offline Video	Ensure video encoding works via Open edX video pipeline
+iOS Companion App	Build from edx-app-ios
+
+
+
+⸻
+
+✅ Summary
+
+Task	✅ Done
+Clone edX Android app	✅
+Configure API + OAuth2	✅
+Build & install APK	✅
+Brand the app	✅
+Run on device	✅
+
+
+
+⸻
+
+Would you like:
+	•	Help integrating an AI tutor screen?
+	•	Firebase push notifications?
+	•	A script to automate config injection for white-label builds?
+
+Happy to assist with the next steps!
+
+____
+
+Awesome — integrating Firebase Push Notifications (FCM) into your DIY Open edX Android app enables real-time learner engagement (reminders, course updates, personalized alerts).
+
+Here’s a complete guide to setting up Firebase Cloud Messaging (FCM) for the edx-app-android project.
+
+⸻
+
+🔔 Step-by-Step: Add Firebase Push Notifications
+
+⸻
+
+✅ 1. Set Up Firebase Project
+	1.	Go to Firebase Console
+	2.	Click Add Project → follow the setup
+	3.	Add your Android app:
+	•	Package name: use what’s in AndroidManifest.xml (e.g., org.edx.mobile)
+	•	SHA-1: optional (needed for Google sign-in)
+	4.	Download the google-services.json file
+
+⸻
+
+📁 2. Add google-services.json to Your App
+
+Put the file inside:
+
+edx-app-android/app/google-services.json
+
+
+
+⸻
+
+⚙️ 3. Update build.gradle Files
+
+android/build.gradle (Project level)
+
+buildscript {
+    dependencies {
+        classpath 'com.google.gms:google-services:4.4.0'
+    }
+}
+
+app/build.gradle (Module level)
+
+apply plugin: 'com.google.gms.google-services'
+
+dependencies {
+    implementation 'com.google.firebase:firebase-messaging:23.2.1'
+}
+
+✅ Sync Gradle now.
+
+⸻
+
+🔧 4. Add Firebase Messaging Service
+
+Create a new Java/Kotlin file:
+
+app/src/main/java/org/edx/mobile/push/FCMService.java
+
+package org.edx.mobile.push;
+
+import android.util.Log;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
+
+public class FCMService extends FirebaseMessagingService {
+    @Override
+    public void onNewToken(String token) {
+        Log.d("FCM", "New token: " + token);
+        // TODO: Send this token to your LMS server (optional)
+    }
+
+    @Override
+    public void onMessageReceived(RemoteMessage message) {
+        Log.d("FCM", "Message: " + message.getNotification().getBody());
+        // TODO: Customize how to display it
+    }
+}
+
+
+
+⸻
+
+📝 5. Register the Service in AndroidManifest.xml
+
+<service
+    android:name=".push.FCMService"
+    android:exported="false">
+    <intent-filter>
+        <action android:name="com.google.firebase.MESSAGING_EVENT" />
+    </intent-filter>
+</service>
+
+
+
+⸻
+
+🚀 6. Test Notification from Firebase Console
+	1.	Go to your Firebase project
+	2.	Click Cloud Messaging > Send your first message
+	3.	Enter notification details
+	4.	Target your test device (or use “test on app” with a device token)
+
+⸻
+
+💡 Optional Enhancements
+
+Feature	Description
+Send course alerts	Use LMS plugin or admin interface to push data
+Store and use FCM tokens	Send user token to backend for targeting
+Schedule reminders	Use Firebase Cloud Functions or CRON jobs
+Custom in-app UI for messages	Show banners, badges, or alerts
+
+
+
+⸻
+
+🔐 Secure Token Handling
+
+To store or use device tokens:
+	1.	In onNewToken(), POST to your backend:
+
+// Example
+Http.post("https://your-lms.com/api/store_fcm_token", {
+  "token": token,
+  "user": userId
+})
+
+
+	2.	Use Tutor plugin or LMS Django API to handle and store FCM tokens for each user.
+
+⸻
+
+✅ Summary
+
+Task	✅ Done
+Firebase project setup	✅
+Integrated google-services	✅
+FCM service created	✅
+Test push sent successfully	✅
+
+
+
+⸻
+
+Would you like help with:
+	•	Backend integration to store FCM tokens in Tutor-based LMS?
+	•	Sending notifications based on course events or AI triggers?
+	•	Setting up Firebase Cloud Functions to automate push workflows?
+
+Happy to help wire up the full loop!
