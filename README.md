@@ -1,6 +1,13 @@
 # openedx
 
-Great question! Let’s break this down clearly to help you assess whether Overhang.io’s Open edX distribution (called Tutor) is the right foundation for deeply customizing and AI-enabling Open edX.
+https://docs.tutor.edly.io/install.html#download
+```
+git clone https://github.com/overhangio/tutor
+cd tutor
+pip install -e .
+```
+
+Let’s break this down clearly to help you assess whether Overhang.io’s Open edX distribution (called Tutor) is the right foundation for deeply customizing and AI-enabling Open edX.
 
 ⸻
 
