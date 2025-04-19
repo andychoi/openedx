@@ -302,7 +302,7 @@ Tutor supports:
 
 ⸻
 
-Awesome! Let’s walk through two powerful Tutor customizations:
+Let’s walk through two powerful Tutor customizations:
 	1.	✅ Creating a Custom Tutor Plugin
 	2.	📂 Mounting Your Own Fork of edx-platform into Tutor
 
